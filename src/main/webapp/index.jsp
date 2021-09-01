@@ -6,3 +6,5 @@
 //System.out.println(application.getContextPath());
 response.sendRedirect(application.getContextPath() + "/ch01/content");
 %>
+
+
