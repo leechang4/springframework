@@ -21,24 +21,28 @@ public class Ch10ExceptionHandler {
 	@ExceptionHandler
 	public String handleNullPointerException(NullPointerException e) {
 		logger.info("실행");
+		e.printStackTrace();
 		return "error/500_null";
 	}
 	
 	@ExceptionHandler
 	public String handleClassCastException(ClassCastException e) {
 		logger.info("실행");
+		e.printStackTrace();
 		return "error/500_cast";
 	}
 	
 	@ExceptionHandler
 	public String handleClassCastException(Ch10SoldOutException e) {
 		logger.info("실행");
+		e.printStackTrace();
 		return "error/soldout";
 	}
 	
 	@ExceptionHandler
 	public String handleException(Exception e) {
 		logger.info("실행");
+		e.printStackTrace();
 		return "error/500";
 	}
 }
