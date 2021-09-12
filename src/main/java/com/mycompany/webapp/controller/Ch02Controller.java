@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-@Controller
+@Controller 
 @RequestMapping("/ch02")
 public class Ch02Controller {
 	private static final Logger logger = LoggerFactory.getLogger(Ch02Controller.class);

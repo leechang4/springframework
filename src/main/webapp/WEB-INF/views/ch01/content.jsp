@@ -8,7 +8,7 @@
 	</div>
 	<div class="card-body">
 		<img src="${pageContext.request.contextPath}/resources/images/logo-spring.png"
-			 width="200px"/>
+			 width="100px"/>
 		<hr/>
 		1. STS 설치 		<br/>
 		2. 플러그인 설치 	<br/>
