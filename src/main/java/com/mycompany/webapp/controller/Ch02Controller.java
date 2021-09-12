@@ -16,7 +16,7 @@ public class Ch02Controller {
 	
 	@RequestMapping("/content")
 	public String content() {
-		logger.info("실행");
+		logger.info("실행");  
 		return "ch02/content";
 	}
 	
