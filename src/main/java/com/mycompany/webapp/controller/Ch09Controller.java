@@ -46,7 +46,7 @@ public class Ch09Controller {
 		
 		//파일 파트 데이터를 서버의 파일로 저장
 		String savedname = new Date().getTime() + "-" + attach.getOriginalFilename();
-		File file = new File("D:/2021-hyndai-it&e/upload_files/" + savedname);
+		File file = new File("C:/hyndai_it&e/upload_files/" + savedname);
 		attach.transferTo(file);
 		
 		return "redirect:/ch09/content";
@@ -68,7 +68,7 @@ public class Ch09Controller {
 		
 		//파일 파트 데이터를 서버의 파일로 저장
 		String savedname = new Date().getTime() + "-" + attach.getOriginalFilename();
-		File file = new File("D:/2021-hyndai-it&e/upload_files/" + savedname);
+		File file = new File("C:/hyndai_it&e/upload_files/" + savedname);
 		attach.transferTo(file);
 		
 		JSONObject jsonObject = new JSONObject();
@@ -96,7 +96,7 @@ public class Ch09Controller {
 			HttpServletResponse response,
 			@RequestHeader("User-Agent") String userAgent) throws Exception {
 		//fileNo를 이용해서 DB에서 파일 정보를 가져오기
-		String contentType = "image/jpeg";
+		String contentType = "image/jpeg"; 
 		String origianFilename = "눈내리는마을.jpg";
 		String savedName = "1630656702864-눈내리는마을.jpg";
 		
@@ -116,7 +116,7 @@ public class Ch09Controller {
 		response.setHeader("Content-Disposition", "attachment; filename=\"" + origianFilename + "\"");
 		
 		//파일로부터 데이터를 읽는 입력스트림 생성		
-		String filePath = "D:/2021-hyndai-it&e/upload_files/" + savedName;
+		String filePath = "C:/hyndai_it&e/upload_files/" + savedName;
 		InputStream is = new FileInputStream(filePath);
 		
 		//응답 바디에 출력하는 출력스트림 얻기

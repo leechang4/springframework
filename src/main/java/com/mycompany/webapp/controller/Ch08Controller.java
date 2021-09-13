@@ -1,6 +1,9 @@
 package com.mycompany.webapp.controller;
 
-import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.json.JSONObject;
@@ -20,10 +23,9 @@ import com.mycompany.webapp.dto.Ch08InputForm;
 
 @Controller
 @RequestMapping("/ch08")
-@SessionAttributes({"inputForm"})
+@SessionAttributes({"inputForm"})	// Ch08Controller가 처리하는 내용에 대해서만 세션이 유지된다.
 public class Ch08Controller {
 	private static final Logger logger = LoggerFactory.getLogger(Ch08Controller.class);
-	
 	@RequestMapping("/content")
 	public String content() {
 		return "ch08/content";
@@ -31,34 +33,43 @@ public class Ch08Controller {
 	
 	@GetMapping(value="/saveData", produces="application/json; charset=UTF-8")
 	@ResponseBody
-	public String saveData(String name, HttpServletRequest request, HttpSession session) {
+	public String saveData(String name, HttpSession session) {
 		logger.info("실행");
 		logger.info("name: " + name);
 		
-		//HttpSession session = request.getSession();
 		session.setAttribute("name", name);
-		
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("result", "success");
-		String json = jsonObject.toString(); //{"result":"success"}
+		String json = jsonObject.toString(); // {"result":"success"}
 		return json;
 	}
 	
+	// 방법 1
+	/*	@GetMapping(value="/readData", produces="application/json; charset=UTF-8")
+		@ResponseBody
+		public String readData(HttpSession session) {
+			logger.info("실행");
+			
+			String name = (String) session.getAttribute("name");
+			logger.info("name: " + name);
+			
+			JSONObject jsonObject = new JSONObject();
+			jsonObject.put("name", name);
+			String json = jsonObject.toString(); // {"name":"홍길동"}
+			return json;
+		}*/
+	
+	// 방법 2
 	@GetMapping(value="/readData", produces="application/json; charset=UTF-8")
 	@ResponseBody
-	public String readData(HttpSession session, @SessionAttribute String name) {
+	public String readData(@SessionAttribute String name) {
 		logger.info("실행");
-
-		//방법1
-		//String name = (String) session.getAttribute("name");
-		//logger.info("name: " + name);
 		
-		//방법2
 		logger.info("name: " + name);
 		
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("name", name);
-		String json = jsonObject.toString(); //{"name":"홍길동"}
+		String json = jsonObject.toString(); // {"name":"홍길동"}
 		return json;
 	}
 	
@@ -76,19 +87,21 @@ public class Ch08Controller {
 		}
 		return "redirect:/ch08/content";
 	}
-	
+	// 방법 1
 	@GetMapping("/logout")
 	public String logout(HttpSession session) {
 		logger.info("실행");
-		
-		//방법1
 		session.removeAttribute("sessionMid");
-		
-		//방법2
-		//session.invalidate();
-		
-		return "redirect:/ch08/content";
+		return "redirect:/ch08/loginForm";
 	}
+	
+	// 방법 2 -> 로그아웃 시 사용자의 모든 정보를 없앨 때 씀
+	/*@GetMapping("/logout")
+	public String logout(HttpSession session) {
+		logger.info("실행");
+		session.invalidate(); // 세션 객체 자체가 없어져버림
+		return "redirect:/ch08/loginForm";
+	}*/
 	
 	@PostMapping(value="/loginAjax", produces="application/json; charset=UTF-8")
 	@ResponseBody
@@ -98,7 +111,7 @@ public class Ch08Controller {
 		
 		if(!mid.equals("spring")) {
 			result = "wrongMid";
-		} else if(!mpassword.equals("12345")) {
+		} else if (!mpassword.equals("12345")) {
 			result = "wrongMpassword";
 		} else {
 			result = "success";
@@ -107,32 +120,54 @@ public class Ch08Controller {
 		
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("result", result);
-		String json = jsonObject.toString(); 
+		String json = jsonObject.toString(); // {"name":"홍길동"}
 		return json;
 	}
 	
-	@GetMapping(value="/logoutAjax", produces="application/json; charset=UTF-8")
+	/*@GetMapping(value="/logoutAjax", produces="application/json; charset=UTF-8")
 	@ResponseBody
-	public String logoutAjax(HttpSession session) {
+	public String logoutAjax(String mid, String mpassword, HttpSession session) {
 		logger.info("실행");
-		
-		session.invalidate();
+	
+	//		session.invalidate();
+		session.removeAttribute("sessionMid");
 		
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("result", "success");
-		String json = jsonObject.toString(); 
+		String json = jsonObject.toString(); // {"name":"홍길동"}
 		return json;
+	}*/
+	
+	@GetMapping(value="/logoutAjax")
+	public void logoutAjax(HttpSession session, HttpServletResponse response) throws IOException {
+		logger.info("실행");
+	
+		session.invalidate(); // 세션을 없애고 만드는 시간보다 밑의 코드를 실행하고 pw를 close하는 시간이 더 빠르기 때문에 에러 발생
+//		session.removeAttribute("sessionMid");
+		
+		response.setContentType("application/json; charset=UTF-8");
+		PrintWriter pw = response.getWriter();
+		
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("result", "success");
+		String json = jsonObject.toString(); // {"name":"홍길동"}
+
+		pw.println(json);
+//		pw.flush();
+//		pw.close();
 	}
 	
-	//세션에 "inputForm" 이름이 존재하지 않을 경우 딱 한번 실행
 	@ModelAttribute("inputForm")
-	public Ch08InputForm getInputForm() {
+	// request를 할때마다 실행되는 메서드 -> 클래스 레벨에 붙은 @SessionAttributes로 인해 한 번만 실행되고 해당 객체를 공유함
+	// -> 세션에 "inputForm"이라는 이름이 없을 때만 딱 한 번 실행
+	public Ch08InputForm getInputForm() { 
 		logger.info("실행");
 		Ch08InputForm inputForm = new Ch08InputForm();
 		return inputForm;
 	}
 	
 	@GetMapping("/inputStep1")
+//	public String inputStep1(Ch08InputForm inputForm) { // 이렇게 쓸 경우 요청마다 새로운 inputForm이 만들어져버린다.
 	public String inputStep1(@ModelAttribute("inputForm") Ch08InputForm inputForm) {
 		logger.info("실행");
 		return "ch08/inputStep1";
@@ -155,28 +190,12 @@ public class Ch08Controller {
 		logger.info("data2: " + inputForm.getData2());
 		logger.info("data3: " + inputForm.getData3());
 		logger.info("data4: " + inputForm.getData4());
-		//처리 내용~
-		//세션에 저장되어 있는 inputForm을 제거
+		// 처리 내용~
+		// 세션에 저장되어있는 inputForm을 제거
 		sessionStatus.setComplete();
+//		session.removeAttribute("inputForm") -> 이런 방식으로 지우면 안됨
 		return "redirect:/ch08/content";
 	}
+	
+	
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
