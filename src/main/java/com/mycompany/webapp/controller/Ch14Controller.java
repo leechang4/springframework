@@ -12,8 +12,15 @@ import javax.sql.DataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.mycompany.webapp.dto.Ch14Member;
+import com.mycompany.webapp.service.Ch14MemberService;
+import com.mycompany.webapp.service.Ch14MemberService.JoinResult;
+import com.mycompany.webapp.service.Ch14MemberService.LoginResult;
 
 @Controller
 @RequestMapping("/ch14")
@@ -141,4 +148,54 @@ public class Ch14Controller {
 		
 		return "redirect:/ch14/content";
 	}
+	@Resource
+	private Ch14MemberService memberService;
+	
+	@GetMapping("/join")
+	public String joinForm() {
+		return "ch14/joinForm";
+	}
+	
+	@PostMapping("/join")
+	public String join(Ch14Member member, Model model) {
+		member.setMenabled(1);
+		member.setMrole("ROLE_USER");
+		JoinResult result = memberService.join(member);
+		
+		if (result == JoinResult.SUCCESS) {
+			return "redirect:/ch14/content";
+		} else if (result == JoinResult.DUPLICATED) { 
+			model.addAttribute("error", "중복된 아이디가 있습니다.");
+			return "ch14/joinForm";
+		} else { 
+			model.addAttribute("error", "회원 가입이 실패되었습니다. 다시 시도해 주세요.");
+			return "ch14/joinForm";
+		}
+	}
+	
+	
+
+	@GetMapping("/login")
+	public String loginForm(Ch14Member member, Model model) {
+		return "ch14/loginForm";
+	}
+
+	
+	@PostMapping("/login")
+	public String login(Ch14Member member, Model model) {
+		LoginResult result = memberService.login(member);
+		if(result == LoginResult.SUCCESS) {
+			return "redirect:/ch14/content";
+		} else if(result ==LoginResult.FAIL_MID) {
+			model.addAttribute("error", "아아디가 존재하지 않습니다.");
+			return "ch14/joinForm";
+		}else if(result ==LoginResult.FAIL_MPASSWORD) {
+			model.addAttribute("error", "패스워드가 틀립니다.");
+			return "ch14/joinForm";
+		}else {
+			model.addAttribute("error", "알수 없는 이유로 로그인이 되지 않았습니다. 다시 시도해 주세요.");
+			return "ch14/joinForm";
+		}
+	}
+
 }
