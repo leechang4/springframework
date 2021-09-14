@@ -2,8 +2,20 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.mycompany.webapp.dao.Ch14BoardDao">
-	<select id="selectByPage" resultType="board">
-		SELECT bno, btitle, bdate, mid FROM board
+	<select id="selectByPage" parameterType="pager" resultType="board">
+		 
+		SELECT rnum, bno, btitle, bdate, mid
+		FROM(
+		SELECT ROWNUM as rnum, bno, btitle, bdate, mid 
+		FROM (
+		    SELECT bno, btitle, bdate, mid 
+		    FROM board
+		    ORDER BY bno DESC
+		)
+		WHERE rownum &lt;= #{endRowNo} 
+		)
+		WHERE rnum &gt;= #{startRowNo}	
+		
 	</select>
 	
 	<select id="count" resultType="int">
@@ -19,7 +31,7 @@
 		VALUES(SEQ_BNO.nextval, #{btitle}, #{bcontent}, SYSDATE, #{mid})
 	</insert>
 	
-	<delete id="deleteBybno" parameterType="int">
+	<delete id="deleteByBno" parameterType="int">
 		DELETE FROM board WHERE bno=#{bno}
 	</delete>
 	

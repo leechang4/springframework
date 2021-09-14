@@ -17,9 +17,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.mycompany.webapp.dto.Ch14Board;
 import com.mycompany.webapp.dto.Ch14Member;
+import com.mycompany.webapp.dto.Pager;
 import com.mycompany.webapp.service.Ch14BoardService;
 import com.mycompany.webapp.service.Ch14MemberService;
 import com.mycompany.webapp.service.Ch14MemberService.JoinResult;
@@ -35,13 +37,11 @@ public class Ch14Controller {
 	
 	@RequestMapping("/content")
 	public String content() {
-		logger.info("실행");
-
 		return "ch14/content";
 	}
 	
 	@GetMapping("/testConnectToDB")
-	public String testConnectToDB() throws SQLException {
+	public String testConnectToDB() throws Exception {
 		// 커넥션 풀에서 연결 객체 하나를 가져오기
 		Connection conn = dataSource.getConnection();
 		logger.info("연결 성공");
@@ -53,7 +53,7 @@ public class Ch14Controller {
 	}
 	
 	@GetMapping("/testInsert")
-	public String testInsert() throws SQLException {
+	public String testInsert() throws Exception {
 		// 커넥션 풀에서 연결 객체 하나를 가져오기
 		Connection conn = dataSource.getConnection();
 		
@@ -77,7 +77,7 @@ public class Ch14Controller {
 	}
 	
 	@GetMapping("/testSelect")
-	public String testSelect() throws SQLException {
+	public String testSelect() throws Exception {
 		// 커넥션 풀에서 연결 객체 하나를 가져오기
 		Connection conn = dataSource.getConnection();
 		
@@ -107,7 +107,7 @@ public class Ch14Controller {
 	}
 	
 	@GetMapping("/testUpdate")
-	public String testUpdate() throws SQLException {
+	public String testUpdate() throws Exception {
 		// 커넥션 풀에서 연결 객체 하나를 가져오기
 		Connection conn = dataSource.getConnection();
 		
@@ -131,7 +131,7 @@ public class Ch14Controller {
 	}
 	
 	@GetMapping("/testDelete")
-	public String testDelete() throws SQLException {
+	public String testDelete() throws Exception {
 		// 커넥션 풀에서 연결 객체 하나를 가져오기
 		Connection conn = dataSource.getConnection();
 		
@@ -205,9 +205,49 @@ public class Ch14Controller {
 	private Ch14BoardService boardService;
 	
 	@GetMapping("/boardList")
-	public String boardList(Model model) {
-		List<Ch14Board> boards = boardService.getBoards();
+	public String boardList(@RequestParam(defaultValue = "1") int pageNo, Model model) {
+		int totalRows = boardService.getTotalBoardNum();
+		Pager pager = new Pager(5, 5, totalRows, pageNo);
+		model.addAttribute("pager", pager);
+		
+		List<Ch14Board> boards = boardService.getBoards(pager);
 		model.addAttribute("boards", boards);
 		return"ch14/boardList";
+	}
+	
+	@GetMapping("/boardWriteForm")
+	public String boardWriteForm() {
+		return "ch14/boardWriteForm";
+	}
+	
+	@PostMapping("/boardWrite")
+	public String boardWrite(Ch14Board board) {
+		boardService.writeBoard(board);
+		return "redirect:/ch14/boardList";
+	}
+	@GetMapping("/boardDetail")
+	public String boardDetail(int bno, Model model) {
+		Ch14Board board = boardService.getBoard(bno);
+		model.addAttribute("board",board);
+		return "ch14/boardDetail";
+	}
+	
+	@GetMapping("/boardUpdateForm")
+	public String boardUpdateForm(int bno, Model model) {
+		Ch14Board board = boardService.getBoard(bno);
+		model.addAttribute("board",board);
+		return "ch14/boardUpdateForm";
+	}
+	
+	@PostMapping("/boardUpdate")
+	public String boardUpdate(Ch14Board board) {
+		boardService.updateBoard(board);
+		return "redirect:/ch14/boardDetail?bno=" + board.getBno();
+	}
+	
+	@GetMapping("/boardDelete")
+	public String boardDelete(int bno) {
+		boardService.removeBoard(bno);
+		return "redirect:/ch14/boardList";
 	}
 }

@@ -11,18 +11,18 @@ import com.mycompany.webapp.dto.Ch14Member;
 
 @Repository
 public class Ch14MemberDao {
-
 	private static final Logger logger = LoggerFactory.getLogger(Ch14MemberDao.class);
-
+	
 	@Resource
 	private SqlSessionTemplate sqlSessionTemplate;
 	
 	public int insert(Ch14Member member) {
-		int rows = sqlSessionTemplate.insert("member.insert", member);
+		int rows = sqlSessionTemplate.insert("mybatis.mapper.member.insert", member);
 		return rows;
 	}
-
+	
 	public Ch14Member selectByMid(String mid) {
-		return sqlSessionTemplate.selectOne("member.selectByMid", mid);
+		Ch14Member member = sqlSessionTemplate.selectOne("mybatis.mapper.member.selectByMid", mid);
+		return member;
 	}
 }
