@@ -3,7 +3,8 @@
 
 <mapper namespace="mybatis.mapper.member">
     <insert id="insert" parameterType="member">
-        INSERT INTO member (mid, mname, mpassword, menabled, mrole) 
+        INSERT INTO member 
+        (mid, mname, mpassword, menabled, mrole) 
         VALUES(#{mid}, #{mname}, #{mpassword}, #{menabled}, #{mrole})
     </insert>
     

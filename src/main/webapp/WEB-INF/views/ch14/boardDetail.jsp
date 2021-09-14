@@ -28,9 +28,9 @@
 		         <textarea style="width:100%" readonly>${board.bcontent}</textarea>
 		      </div>
 		      
-		      <a class="btn btn-info btn-sm mt-22" href="boardList">목록</a>
-		      <a class="btn btn-info btn-sm mt-22" href="boardUpdateForm?bno=${board.bno}">수정</a>
-		      <a class="btn btn-info btn-sm mt-22" href="boardDelete?bno=${board.bno}">삭제</a>
+		      <a class="btn btn-info btn-sm mt-2" href="boardList">목록</a>
+		      <a class="btn btn-info btn-sm mt-2" href="boardUpdateForm?bno=${board.bno}">수정</a>
+		      <a class="btn btn-info btn-sm mt-2" href="boardDelete?bno=${board.bno}">삭제</a>
 		      
 		   </div>
 		</div>

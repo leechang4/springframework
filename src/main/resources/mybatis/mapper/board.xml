@@ -3,19 +3,17 @@
 
 <mapper namespace="com.mycompany.webapp.dao.Ch14BoardDao">
 	<select id="selectByPage" parameterType="pager" resultType="board">
-		 
 		SELECT rnum, bno, btitle, bdate, mid
-		FROM(
-		SELECT ROWNUM as rnum, bno, btitle, bdate, mid 
 		FROM (
+		  SELECT ROWNUM as rnum, bno, btitle, bdate, mid
+		  FROM (
 		    SELECT bno, btitle, bdate, mid 
 		    FROM board
 		    ORDER BY bno DESC
+		  )
+		  WHERE rownum &lt;= #{endRowNo}  
 		)
-		WHERE rownum &lt;= #{endRowNo} 
-		)
-		WHERE rnum &gt;= #{startRowNo}	
-		
+		WHERE rnum &gt;= #{startRowNo}
 	</select>
 	
 	<select id="count" resultType="int">

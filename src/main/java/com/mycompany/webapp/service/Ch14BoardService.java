@@ -19,7 +19,7 @@ public class Ch14BoardService {
 	@Resource
 	private Ch14BoardDao boardDao;
 	
-	public List<Ch14Board> getBoards(Pager pager){
+	public List<Ch14Board> getBoards(Pager pager) {
 		return boardDao.selectByPage(pager);
 	}
 	

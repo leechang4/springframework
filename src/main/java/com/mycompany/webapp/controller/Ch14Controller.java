@@ -3,7 +3,6 @@ package com.mycompany.webapp.controller;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
@@ -33,7 +32,7 @@ public class Ch14Controller {
 	private static final Logger logger = LoggerFactory.getLogger(Ch14Controller.class);
 	
 	@Resource
-	private DataSource dataSource; // 인터페이스를 구현한 객체 자동 주입
+	private DataSource dataSource;
 	
 	@RequestMapping("/content")
 	public String content() {
@@ -42,11 +41,12 @@ public class Ch14Controller {
 	
 	@GetMapping("/testConnectToDB")
 	public String testConnectToDB() throws Exception {
-		// 커넥션 풀에서 연결 객체 하나를 가져오기
+		
+		//커넥션 풀에서 연결 객체 하나를 가져오기
 		Connection conn = dataSource.getConnection();
 		logger.info("연결 성공");
 		
-		// 커넥션 풀로 연결 객체를 반납하기 (연결을 끊는 것이 아니라 커넥션 풀로 반납)
+		//커넥션 풀로 연결 객체를 반납하기
 		conn.close();
 		
 		return "redirect:/ch14/content";
@@ -54,11 +54,12 @@ public class Ch14Controller {
 	
 	@GetMapping("/testInsert")
 	public String testInsert() throws Exception {
-		// 커넥션 풀에서 연결 객체 하나를 가져오기
+		
+		//커넥션 풀에서 연결 객체 하나를 가져오기
 		Connection conn = dataSource.getConnection();
 		
 		try {
-			// 작업 처리
+			//작업 처리
 			String sql = "INSERT INTO board VALUES(SEQ_BNO.NEXTVAL, ?, ?, SYSDATE, ?)";
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, "오늘은 월요일");
@@ -68,9 +69,9 @@ public class Ch14Controller {
 			pstmt.close();
 		} catch(Exception e) {
 			e.printStackTrace();
-		}
+		} 
 		
-		// 커넥션 풀로 연결 객체를 반납하기 (연결을 끊는 것이 아니라 커넥션 풀로 반납)
+		//커넥션 풀로 연결 객체를 반납하기
 		conn.close();
 		
 		return "redirect:/ch14/content";
@@ -78,11 +79,12 @@ public class Ch14Controller {
 	
 	@GetMapping("/testSelect")
 	public String testSelect() throws Exception {
-		// 커넥션 풀에서 연결 객체 하나를 가져오기
+		
+		//커넥션 풀에서 연결 객체 하나를 가져오기
 		Connection conn = dataSource.getConnection();
 		
 		try {
-			// 작업 처리
+			//작업 처리
 			String sql = "SELECT bno, btitle, bcontent, bdate, mid FROM board";
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			ResultSet rs = pstmt.executeQuery();
@@ -98,9 +100,9 @@ public class Ch14Controller {
 			pstmt.close();
 		} catch(Exception e) {
 			e.printStackTrace();
-		}
+		} 
 		
-		// 커넥션 풀로 연결 객체를 반납하기 (연결을 끊는 것이 아니라 커넥션 풀로 반납)
+		//커넥션 풀로 연결 객체를 반납하기
 		conn.close();
 		
 		return "redirect:/ch14/content";
@@ -108,11 +110,12 @@ public class Ch14Controller {
 	
 	@GetMapping("/testUpdate")
 	public String testUpdate() throws Exception {
-		// 커넥션 풀에서 연결 객체 하나를 가져오기
+		
+		//커넥션 풀에서 연결 객체 하나를 가져오기
 		Connection conn = dataSource.getConnection();
 		
 		try {
-			// 작업 처리
+			//작업 처리
 			String sql = "UPDATE board SET btitle=?, bcontent=? WHERE bno=?";
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, "배고파요");
@@ -122,9 +125,9 @@ public class Ch14Controller {
 			pstmt.close();
 		} catch(Exception e) {
 			e.printStackTrace();
-		}
+		} 
 		
-		// 커넥션 풀로 연결 객체를 반납하기 (연결을 끊는 것이 아니라 커넥션 풀로 반납)
+		//커넥션 풀로 연결 객체를 반납하기
 		conn.close();
 		
 		return "redirect:/ch14/content";
@@ -132,11 +135,12 @@ public class Ch14Controller {
 	
 	@GetMapping("/testDelete")
 	public String testDelete() throws Exception {
-		// 커넥션 풀에서 연결 객체 하나를 가져오기
+		
+		//커넥션 풀에서 연결 객체 하나를 가져오기
 		Connection conn = dataSource.getConnection();
 		
 		try {
-			// 작업 처리
+			//작업 처리
 			String sql = "DELETE FROM board WHERE bno=?";
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, 0);
@@ -144,13 +148,14 @@ public class Ch14Controller {
 			pstmt.close();
 		} catch(Exception e) {
 			e.printStackTrace();
-		}
+		} 
 		
-		// 커넥션 풀로 연결 객체를 반납하기 (연결을 끊는 것이 아니라 커넥션 풀로 반납)
+		//커넥션 풀로 연결 객체를 반납하기
 		conn.close();
 		
 		return "redirect:/ch14/content";
 	}
+	
 	@Resource
 	private Ch14MemberService memberService;
 	
@@ -163,40 +168,36 @@ public class Ch14Controller {
 	public String join(Ch14Member member, Model model) {
 		member.setMenabled(1);
 		member.setMrole("ROLE_USER");
-		JoinResult result = memberService.join(member);
-		
-		if (result == JoinResult.SUCCESS) {
+		JoinResult jr = memberService.join(member);
+		if(jr == JoinResult.SUCCESS) {
 			return "redirect:/ch14/content";
-		} else if (result == JoinResult.DUPLICATED) { 
+		} else if(jr == JoinResult.DUPLICATED) {
 			model.addAttribute("error", "중복된 아이디가 있습니다.");
 			return "ch14/joinForm";
-		} else { 
+		} else {
 			model.addAttribute("error", "회원 가입이 실패되었습니다. 다시 시도해 주세요.");
 			return "ch14/joinForm";
 		}
 	}
 	
-	
-
 	@GetMapping("/login")
-	public String loginForm(Ch14Member member, Model model) {
+	public String loginForm() {
 		return "ch14/loginForm";
 	}
-
 	
 	@PostMapping("/login")
 	public String login(Ch14Member member, Model model) {
 		LoginResult result = memberService.login(member);
 		if(result == LoginResult.SUCCESS) {
 			return "redirect:/ch14/content";
-		} else if(result ==LoginResult.FAIL_MID) {
-			model.addAttribute("error", "아아디가 존재하지 않습니다.");
+		} else if(result == LoginResult.FAIL_MID) {
+			model.addAttribute("error", "아이디가 존재하지 않습니다.");
 			return "ch14/loginForm";
-		}else if(result ==LoginResult.FAIL_MPASSWORD) {
+		} else if(result == LoginResult.FAIL_MPASSWORD) {
 			model.addAttribute("error", "패스워드가 틀립니다.");
 			return "ch14/loginForm";
-		}else {
-			model.addAttribute("error", "알수 없는 이유로 로그인이 되지 않았습니다. 다시 시도해 주세요.");
+		} else {
+			model.addAttribute("error", "알수 없은 이유로 로그인이 되지 않았습니다. 다시 시도해 주세요.");
 			return "ch14/loginForm";
 		}
 	}
@@ -205,14 +206,14 @@ public class Ch14Controller {
 	private Ch14BoardService boardService;
 	
 	@GetMapping("/boardList")
-	public String boardList(@RequestParam(defaultValue = "1") int pageNo, Model model) {
+	public String boardList(@RequestParam(defaultValue="1") int pageNo, Model model) {
 		int totalRows = boardService.getTotalBoardNum();
-		Pager pager = new Pager(5, 5, totalRows, pageNo);
+		Pager pager = new Pager(5, 5, totalRows, pageNo);	
 		model.addAttribute("pager", pager);
 		
 		List<Ch14Board> boards = boardService.getBoards(pager);
 		model.addAttribute("boards", boards);
-		return"ch14/boardList";
+		return "ch14/boardList";
 	}
 	
 	@GetMapping("/boardWriteForm")
@@ -225,17 +226,18 @@ public class Ch14Controller {
 		boardService.writeBoard(board);
 		return "redirect:/ch14/boardList";
 	}
+	
 	@GetMapping("/boardDetail")
 	public String boardDetail(int bno, Model model) {
 		Ch14Board board = boardService.getBoard(bno);
-		model.addAttribute("board",board);
+		model.addAttribute("board", board);
 		return "ch14/boardDetail";
 	}
 	
 	@GetMapping("/boardUpdateForm")
 	public String boardUpdateForm(int bno, Model model) {
 		Ch14Board board = boardService.getBoard(bno);
-		model.addAttribute("board",board);
+		model.addAttribute("board", board);
 		return "ch14/boardUpdateForm";
 	}
 	
