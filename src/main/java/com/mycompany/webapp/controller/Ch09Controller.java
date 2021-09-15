@@ -98,7 +98,7 @@ public class Ch09Controller {
 		//fileNo를 이용해서 DB에서 파일 정보를 가져오기
 		String contentType = "image/jpeg"; 
 		String origianFilename = "눈내리는마을.jpg";
-		String savedName = "1630656702864-눈내리는마을.jpg";
+		String savedName = "1631617220238-눈내리는마을.jpg";
 		
 		//응답 바디의 데이터의 형식 설정
 		response.setContentType(contentType);

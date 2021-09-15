@@ -50,7 +50,7 @@ public class Ch12FileDownloadView extends AbstractView {
 		response.setHeader("Content-Disposition", "attachment; filename=\"" + origianFilename + "\"");
 		
 		//파일로부터 데이터를 읽는 입력스트림 생성		
-		String filePath = "D:/2021-hyndai-it&e/upload_files/" + savedName;
+		String filePath = "C:/hyndai_it&e/upload_files/" + savedName;
 		InputStream is = new FileInputStream(filePath);
 		
 		//응답 바디에 출력하는 출력스트림 얻기

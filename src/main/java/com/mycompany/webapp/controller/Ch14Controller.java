@@ -190,14 +190,17 @@ public class Ch14Controller {
 		LoginResult result = memberService.login(member);
 		if(result == LoginResult.SUCCESS) {
 			return "redirect:/ch14/content";
+			
 		} else if(result == LoginResult.FAIL_MID) {
 			model.addAttribute("error", "아이디가 존재하지 않습니다.");
 			return "ch14/loginForm";
+			
 		} else if(result == LoginResult.FAIL_MPASSWORD) {
 			model.addAttribute("error", "패스워드가 틀립니다.");
 			return "ch14/loginForm";
+			
 		} else {
-			model.addAttribute("error", "알수 없은 이유로 로그인이 되지 않았습니다. 다시 시도해 주세요.");
+			model.addAttribute("error", "알수 없는 이유로 로그인이 되지 않았습니다. 다시 시도해 주세요.");
 			return "ch14/loginForm";
 		}
 	}

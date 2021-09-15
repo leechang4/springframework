@@ -26,7 +26,7 @@ public class Ch12FileListView extends AbstractView {
 		logger.info("실행");
 		
 		//파일의 총 수 및 파일 이름 목록 얻기
-		String fileDir = "D:/2021-hyndai-it&e/upload_files";
+		String fileDir = "C:/hyndai_it&e/upload_files/";
 		File file = new File(fileDir);
 		String[] fileList = file.list();
 		int totalFileNum = fileList.length;
