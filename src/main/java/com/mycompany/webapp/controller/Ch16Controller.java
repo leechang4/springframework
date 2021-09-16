@@ -3,15 +3,18 @@ package com.mycompany.webapp.controller;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.mycompany.webapp.dto.Ch16Account;
 import com.mycompany.webapp.service.Ch16AccountService;
+import com.mycompany.webapp.service.Ch16AccountService.TransferResult;
 
 @Controller
 @RequestMapping("/ch16")
@@ -30,9 +33,14 @@ public class Ch16Controller {
 	}
 	
 	@RequestMapping("/transaction1")
-	public String transaction1(int fromAno, int toAno, int amount) {
+	public String transaction1(int fromAno, int toAno, int amount, HttpSession session) {
 		logger.info("실행");
-		accountService.transfer1(fromAno, toAno, amount);
+		session.removeAttribute("transferError");
+		TransferResult result = accountService.transfer1(fromAno, toAno, amount);
+		if(result == TransferResult.FAIL_NOT_ENOUGH_BALANCE) {
+			session.setAttribute("transferError", "계좌가 존재하지 않습니다.");
+		}
+		
 		return "redirect:/ch16/content";
 	}
 	
@@ -42,4 +50,5 @@ public class Ch16Controller {
 		accountService.transfer2(fromAno, toAno, amount);
 		return "redirect:/ch16/content";
 	}
+	
 }
